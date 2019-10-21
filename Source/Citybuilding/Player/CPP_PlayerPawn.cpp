@@ -37,7 +37,7 @@ ACPP_PlayerPawn::ACPP_PlayerPawn()
 	PlayerCamera->SetupAttachment(SpringArm);
 
 	//setup Camera position and spring arm length
-	SpringArm->TargetArmLength = FArmLevel * FArmLengthMax + (1.0f - FArmLevel)*FArmLengthMin;
+	SpringArm->TargetArmLength = FZoomLevel * FArmLengthMax + (1.0f - FZoomLevel)*FArmLengthMin;
 	SceneRoot->SetWorldRotation({ 0.f,0.f,0.f }, false, false, ETeleportType::None);
 	SpringArm->AddWorldRotation({ FAngleMax,0.f,0.f }, false, false, ETeleportType::None);
 
@@ -69,26 +69,28 @@ void ACPP_PlayerPawn::TurnRight(float Rate)
 
 void ACPP_PlayerPawn::ZoomIn()
 {
-	HandleZoom(0.05);
+	FZoomLevel += 0.05;
 }
 
 void ACPP_PlayerPawn::ZoomOut()
 {
-	HandleZoom(-0.05);
+	FZoomLevel -= 0.05;
 }
 
-void ACPP_PlayerPawn::HandleZoom(float Amount) {
+void ACPP_PlayerPawn::HandleZoom(float DeltaTime) {
 	//Clamp to normalized values
-	FZoomLevel += Amount;
 	FZoomLevel = FMath::Clamp<float>(FZoomLevel, 0.0f, 1.0f);
 
 	//Adjust Arm Length
-	SpringArm->TargetArmLength = FZoomLevel * FArmLengthMax + (1 - FZoomLevel) * FArmLengthMin;
+	SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, FZoomLevel * FArmLengthMax + (1 - FZoomLevel) * FArmLengthMin, DeltaTime, 10.f);
+
 
 	//Adjust Angle
 	float FAngleLerp = FZoomLevel * FAngleMax + (1 - FZoomLevel) * FAngleMin;
+	FRotator CurrentRotation = SpringArm->GetComponentRotation();
+	float CurrentAngle = CurrentRotation.Pitch;
 	FAngleLerp = FMath::Clamp<float>(FAngleLerp, FAngleMax, FAngleMin);
-	SpringArm->SetWorldRotation({ FAngleLerp, 0.f, 0.f }, false, false, ETeleportType::None);
+	SpringArm->SetWorldRotation({FMath::FInterpTo(CurrentAngle, FAngleLerp, DeltaTime, 10.f), 0.f, 0.f }, false, false, ETeleportType::None);
 
 	if (GEngine) {
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Zoom Level: %f"), FZoomLevel));
@@ -99,7 +101,7 @@ void ACPP_PlayerPawn::HandleZoom(float Amount) {
 void ACPP_PlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	HandleZoom(DeltaTime);
 }
 
 // Called to bind functionality to input

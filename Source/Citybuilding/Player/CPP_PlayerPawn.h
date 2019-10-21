@@ -24,7 +24,7 @@ protected:
 	void TurnRight(float Rate);
 	void ZoomIn();
 	void ZoomOut();
-	void HandleZoom(float Amount);
+	void HandleZoom(float DeltaTime);
 
 	UPROPERTY(EditAnywhere, Category = "Components")
 	class USceneComponent* SceneRoot;
@@ -51,11 +51,8 @@ public:
 
 private:
 	//normalized zoom value
-	//this changes spring arm length and camera angle
+	//this changes spring arm length (0 = minimum) and camera angle (0 = level)
 	float FZoomLevel = 1.0f;
-
-	//Normalized Springarm Length (1 means zoomed out)
-	float FArmLevel = 1.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Zoom")
 	float FArmLengthMin = 250.0f;
