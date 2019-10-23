@@ -54,15 +54,19 @@ private:
 	//this changes spring arm length (0 = minimum) and camera angle (0 = level)
 	float FZoomLevel = 1.0f;
 
+	//Minimum camera distance from pawn
 	UPROPERTY(EditAnywhere, Category = "Zoom")
 	float FArmLengthMin = 250.0f;
 
+	//Maximum distance from pawn
 	UPROPERTY(EditAnywhere, Category = "Zoom")
 	float FArmLengthMax = 1000.0f;
 
+	//Pitch angle whend fully zoomed in (degrees, 0 = level)
 	UPROPERTY(EditAnywhere, Category = "Zoom")
 	float FAngleMin = 0.0f;
 
+	//Pitch angle when fully zoomed out (degrees)
 	UPROPERTY(EditAnywhere, Category = "Zoom")
 	float FAngleMax = -30.0f;
 };

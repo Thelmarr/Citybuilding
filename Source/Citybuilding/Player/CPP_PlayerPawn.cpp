@@ -93,7 +93,7 @@ void ACPP_PlayerPawn::HandleZoom(float DeltaTime) {
 	SpringArm->SetWorldRotation({FMath::FInterpTo(CurrentAngle, FAngleLerp, DeltaTime, 10.f), 0.f, 0.f }, false, false, ETeleportType::None);
 
 	if (GEngine) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Zoom Level: %f"), FZoomLevel));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Zoom Level: %f"), FZoomLevel));
 	}
 }
 
