@@ -15,26 +15,14 @@ ACPP_GameState::ACPP_GameState() {
 	UE_LOG(LogTemp, Warning, TEXT("GameState created in CPP"));
 }
 
-void ACPP_GameState::SetClockwork(float DeltaTime) {
+void ACPP_GameState::SetClockwork(float DeltaTime, float Speed) {
 	//Adjust real world time to game time through TimeUnit
-	Clockwork += DeltaTime * TimeUnit;
+	Clockwork += DeltaTime * Speed;
 }
 
 void ACPP_GameState::BeginPlay() {
 	Super::BeginPlay();
 	UE_LOG(LogTemp, Warning, TEXT("GameState BeginPlay in CPP"));
-}
-
-void ACPP_GameState::Tick(float DeltaTime) {
-	Super::Tick(DeltaTime);
-	SetClockwork(DeltaTime);
-	if (GEngine) {
-		//GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Blue, FString::Printf(TEXT("GameState ticking %f"), Clockwork));
-	}
-	
-	//UpdateTimeDate();
-	//UE_LOG(LogTemp, Warning, TEXT("GameState ticking in CPP"));
-	UpdateTimeDate();
 }
 
 void ACPP_GameState::UpdateTimeDate() {
@@ -48,7 +36,6 @@ void ACPP_GameState::UpdateTimeDate() {
 	//update internal day count
 	//a day passes every 24 hours
 	DaysSinceStart = floor(Clockwork / 24);
-	//DaysSinceStart == 0 ? DaysSinceStart++ : DaysSinceStart;
 
 	int64 YearsSinceStart = 0;
 	int64 YearFraction = 0;
@@ -57,9 +44,6 @@ void ACPP_GameState::UpdateTimeDate() {
 	//calculate remaining days and correct for leap years
 	//YearsFraction is defined from 0 to 364 (365 in leap years)
 	YearFraction = DaysSinceStart % 365 + floor(YearsSinceStart / 4);
-	if (GEngine) {
-		GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Blue, FString::Printf(TEXT("Day before correction: %02d"), YearFraction));
-	}
 	//check if correction enters new year
 	if (YearFraction >= 365 && YearsSinceStart % 4 == 0) {
 		YearsSinceStart++;
@@ -75,10 +59,6 @@ void ACPP_GameState::UpdateTimeDate() {
 	int DayCor = 0;
 	if (YearsSinceStart % 4 == 0) { DayCor = 1; }
 	else { DayCor = 0; }
-
-	if (GEngine) {
-		GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Blue, FString::Printf(TEXT("Day before calendar: %02d"), YearFraction));
-	}
 
 	//set month and Day
 	//January: 0 to 30 (31 days)
@@ -142,59 +122,7 @@ void ACPP_GameState::UpdateTimeDate() {
 		CalDay = YearFraction - 334 - DayCor + 1;
 	}
 
-	/*
-	//TODO: incrementable value for days whenever clock resets
-	if (ClockHour == 0 && ClockMinute == 0) {
-		CalDay++;
-	}
-
-	if (CalDay == 0) { 
-		CalDay++;
-	}
-	//determine correct months
-	if (CalMonth == 0) {
-		CalMonth = 1;
-	}
-	//check for february in non leap years
-	if (CalDay == 29 && CalMonth == 2 && CalYear % 4 != 0) {
-	CalDay = 1;
-	CalMonth++;
-	}
-	//check february in leap years
-	else if (CalDay == 30 && CalMonth == 2 && CalYear % 4 == 0) {
-		CalDay = 1;
-		CalMonth++;
-	}
-	//check even months
-	else if (CalDay == 31 && CalMonth % 2 == 0) {
-		CalDay = 1;
-		CalMonth++;
-	}
-
-	else if (CalDay == 32) {
-		CalDay = 1;
-		CalMonth++;
-	}
-
-	//determine correct months
-	if (CalMonth == 0) {
-		CalMonth = 1;
-	}
-	if (CalMonth == 13) {
-		CalMonth = 1;
-		CalYear++;
-	}
-	*/
-
-
-	/*
-	//months equal whole division of clockwork by 24 * 30 and mod 12
-	CalMonth = FMath::Fmod(floor(Clockwork / (24 * 30)), 12);
-	if (CalMonth < 1) { CalMonth++; }
-	//years equal whole division of clockwork by 24 * 30 * 12
-	CalYear = floor(Clockwork / (24 * 30 * 12));
-	*/
 	if (GEngine) {
-		GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Blue, FString::Printf(TEXT("%02d/%02d/%04d %02d:%02d"), CalDay, CalMonth, CalYear, ClockHour, ClockMinute));
+		//GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Blue, FString::Printf(TEXT("%02d/%02d/%04d %02d:%02d"), CalDay, CalMonth, CalYear, ClockHour, ClockMinute));
 	}
 }

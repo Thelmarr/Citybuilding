@@ -17,7 +17,7 @@ class CITYBUILDING_API ACPP_GameState : public AGameState
 public:
 	ACPP_GameState();
 
-	virtual void Tick(float DeltaTime) override;
+	//virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
 
 	//Calendar day at game start
@@ -43,7 +43,7 @@ public:
 	int64 ClockMinute = 0;
 
 	//Game hours per second passed
-	UPROPERTY(EditAnywhere, Category = "GameTime", DisplayName = "Time Unit")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "GameTime", DisplayName = "Time Unit")
 	float TimeUnit = 12.5f;
 
 	//How much time has passed (in float)
@@ -54,7 +54,7 @@ public:
 	int64 GameSpeed = 1.0f;
 
 	UFUNCTION(BlueprintCallable, Category = "GameTime")
-	void SetClockwork(float DeltaTime);
+	void SetClockwork(float DeltaTime, float Speed);
 
 	UFUNCTION(BlueprintCallable, Category = "GameTime")
 	void UpdateTimeDate();

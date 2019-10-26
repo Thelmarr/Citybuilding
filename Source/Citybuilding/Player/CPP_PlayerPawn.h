@@ -14,14 +14,13 @@ class CITYBUILDING_API ACPP_PlayerPawn : public APawn
 public:
 	// Sets default values for this pawn's properties
 	ACPP_PlayerPawn();
-
+	void TurnRight(float Value);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	void MoveForward(float Amount);
 	void MoveRight(float Amount);
-	void TurnRight(float Rate);
 	void ZoomIn();
 	void ZoomOut();
 	void HandleZoom(float DeltaTime);
@@ -41,6 +40,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Components")
 	class UCameraComponent* PlayerCamera;
 
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float TurnRate = 1;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -48,6 +50,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	USpringArmComponent* getSpringArmComponentRef() const;
+	UCameraComponent* getCameraComponentRef() const;
 
 private:
 	//normalized zoom value
