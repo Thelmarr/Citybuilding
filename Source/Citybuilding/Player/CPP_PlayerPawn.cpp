@@ -23,30 +23,25 @@ ACPP_PlayerPawn::ACPP_PlayerPawn()
 	SpringArm				= CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
 	PlayerCamera			= CreateDefaultSubobject<UCameraComponent>("PlayerCameraComponent");
 	
-	//bUseControllerRotationYaw = true;
-	//bUseControllerRotationPitch = true;
-	
 	ConstructorHelpers::FObjectFinder<UStaticMesh>MeshObject(TEXT("/Game/StarterContent/Shapes/Shape_Cube"));
 	
 	StaticMesh->SetStaticMesh(MeshObject.Object);
 	StaticMesh->SetupAttachment(SceneRoot);
 
 	SpringArm->SetupAttachment(SceneRoot);
-	//SpringArm->TargetArmLength = 500.0f;
 	PlayerCamera->SetupAttachment(SpringArm);
 	FloatingPawnMovement->UpdatedComponent = SceneRoot;
 	//setup Camera position and spring arm length
 	SpringArm->TargetArmLength = FZoomLevel * FArmLengthMax + (1.0f - FZoomLevel)*FArmLengthMin;
-	//SceneRoot->SetWorldRotation({ 0.f,0.f,0.f }, false, false, ETeleportType::None);
-	//SpringArm->AddWorldRotation({ FAngleMax,0.f,0.f }, false, false, ETeleportType::None);
-	SpringArm->bUsePawnControlRotation = true;
+	SceneRoot->SetWorldRotation({ 0.f,0.f,0.f }, false, false, ETeleportType::None);
+	SpringArm->AddWorldRotation({ FAngleMax,0.f,0.f }, false, false, ETeleportType::None);
+	SpringArm->bUsePawnControlRotation = false;
+	SpringArm->bInheritPitch = false;
+	SpringArm->bInheritYaw = true;
+	SpringArm->bInheritRoll = true;
+	PlayerCamera->bUsePawnControlRotation = false;
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
-
-	/*
-	BUG:: When rotating the camera, the forward vector and movement component update correctly. The SpringArm rotates in the wrong direction
-	
-	*/
 }
 
 // Called when the game starts or when spawned
@@ -93,15 +88,8 @@ void ACPP_PlayerPawn::HandleZoom(float DeltaTime) {
 	float FAngleLerp = FMath::Clamp<float>(FZoomLevel * FAngleMax + (1 - FZoomLevel) * FAngleMin, FAngleMax, FAngleMin);
 	FQuat NewRotationQuad = FRotator(FMath::FInterpTo(PlayerCamera->GetComponentRotation().Pitch, FAngleLerp, DeltaTime, 10.f), 0.f, 0.f).Quaternion();
 	float CurrentAngle = PlayerCamera->GetComponentRotation().Pitch;
-	/*
-	CAMERA ROTATION BUG HERE!
-	*/
 
-	//TODO: Rotate camera aound the X axis to generate pitch difference
-	//PlayerCamera->SetWorldRotation(FRotator(FMath::FInterpTo(CurrentAngle, FAngleLerp, DeltaTime, 10.f), PlayerCamera->GetComponentRotation().Yaw, PlayerCamera->GetComponentRotation().Roll), false, false, ETeleportType::None);
-	if (GEngine) {
-		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("Zoom Level: %f"), FZoomLevel));
-	}
+	SpringArm->SetWorldRotation(FRotator(FMath::FInterpTo(CurrentAngle, FAngleLerp, DeltaTime, 10.f), SpringArm->GetComponentRotation().Yaw, SpringArm->GetComponentRotation().Roll), false, false, ETeleportType::None);
 }
 
 // Called every frame
@@ -109,18 +97,6 @@ void ACPP_PlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	HandleZoom(DeltaTime);
-
-	/*
-	if (GEngine) {
-		GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Yellow, FString::Printf(TEXT("Root Front: %.5f/%.5f/%.5f"), GetRootComponent()->GetForwardVector().X, GetRootComponent()->GetForwardVector().Y, GetRootComponent()->GetForwardVector().Z));
-		GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Purple, FString::Printf(TEXT("Springarm Front: %.5f/%.5f/%.5f"), SpringArm->GetForwardVector().X, SpringArm->GetForwardVector().Y, SpringArm->GetForwardVector().Z));
-		GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, FString::Printf(TEXT("Camera Front: %.5f/%.5f/%.5f"), PlayerCamera->GetForwardVector().X, PlayerCamera->GetForwardVector().Y, PlayerCamera->GetForwardVector().Z));
-
-		GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Yellow, FString::Printf(TEXT("Root Up: %.5f/%.5f/%.5f"), GetRootComponent()->GetUpVector().X, GetRootComponent()->GetUpVector().Y, GetRootComponent()->GetUpVector().Z));
-		GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Purple, FString::Printf(TEXT("Springarm Up: %.5f/%.5f/%.5f"), SpringArm->GetUpVector().X, SpringArm->GetUpVector().Y, SpringArm->GetUpVector().Z));
-		GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, FString::Printf(TEXT("Camera Up: %.5f/%.5f/%.5f"), PlayerCamera->GetUpVector().X, PlayerCamera->GetUpVector().Y, PlayerCamera->GetUpVector().Z));
-	}
-	*/
 }
 
 // Called to bind functionality to input

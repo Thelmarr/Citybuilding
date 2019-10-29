@@ -22,25 +22,25 @@ public:
 
 	//Calendar day at game start
 	UPROPERTY(EditAnywhere, Category = "GameTime", DisplayName = "Starting Day")
-	int64 CalDay = 1;
+	int CalDay = 1;
 
 	//Calendar month at game start
 	UPROPERTY(EditAnywhere, Category = "GameTime", DisplayName = "Starting Month")
-	int64 CalMonth = 1;
+	int CalMonth = 1;
 
 	//Calendar year at game start
 	UPROPERTY(EditAnywhere, Category = "GameTime", DisplayName = "Starting Year")
-	int64 CalYear = 0;
+	int CalYear = 0;
 	
 	//counts the number of passed days since game start for calendar calculation
-	int64 DaysSinceStart = 0;
+	int DaysSinceStart = 0;
 
 	//Day time at game start
 	UPROPERTY(EditAnywhere, Category = "GameTime", DisplayName = "Starting Hour")
-	int64 ClockHour = 0;
+	int ClockHour = 0;
 	//Day time at game start
 	UPROPERTY(EditAnywhere, Category = "GameTime", DisplayName = "Starting Minutes")
-	int64 ClockMinute = 0;
+	int ClockMinute = 0;
 
 	//Game hours per second passed
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "GameTime", DisplayName = "Time Unit")
@@ -51,7 +51,7 @@ public:
 	float Clockwork = 0.f;
 	//Level of Gamespeed
 	UPROPERTY(EditAnywhere, Category = "GameTime", DisplayName = "Game Speed")
-	int64 GameSpeed = 1.0f;
+	int GameSpeed = 1.0f;
 
 	UFUNCTION(BlueprintCallable, Category = "GameTime")
 	void SetClockwork(float DeltaTime, float Speed);
@@ -59,4 +59,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GameTime")
 	void UpdateTimeDate();
 
+	UFUNCTION(BlueprintPure, Category = "GameTime")
+	FVector2D GetTime();
+
+	UFUNCTION(BlueprintPure, Category = "GameTime")
+	FVector GetDate();
 };

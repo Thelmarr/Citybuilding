@@ -18,7 +18,7 @@ public:
 	virtual void SetupInputComponent() override;
 	void OnDragPressed();
 	void OnDragReleased();
-	void OnDragUpdate();
+	void OnDragUpdate(float DeltaTime);
 	void ProcessPlayerInput(float DeltaTime, bool bGamePaused);
 
 	virtual void Tick(float DeltaTime) override;
@@ -28,11 +28,9 @@ private:
 	bool bGamePaused;
 	class ACPP_PlayerPawn* PlayerPawn;
 	float MouseX;
+	float MouseY;
 	float MouseXStart;
 	float MouseYStart;
-	float MouseY;
 
 	FRotator PawnRotation_old;
-	FQuat QOldRot;
-	FRotator CameraRotOld;
 };

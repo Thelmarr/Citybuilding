@@ -126,3 +126,13 @@ void ACPP_GameState::UpdateTimeDate() {
 		//GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Blue, FString::Printf(TEXT("%02d/%02d/%04d %02d:%02d"), CalDay, CalMonth, CalYear, ClockHour, ClockMinute));
 	}
 }
+
+FVector2D ACPP_GameState::GetTime() {
+	FVector2D VClock = { float(ClockHour), float(ClockMinute) };
+	return VClock;
+}
+
+FVector ACPP_GameState::GetDate() {
+	FVector VDate = { float(CalDay), float(CalMonth), float(CalYear)};
+	return VDate;
+}
