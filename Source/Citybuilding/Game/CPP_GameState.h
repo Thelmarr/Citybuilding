@@ -64,4 +64,5 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "GameTime")
 	FVector GetDate();
+
 };

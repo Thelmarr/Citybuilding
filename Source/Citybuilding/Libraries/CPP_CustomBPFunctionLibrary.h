@@ -4,16 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "string.h"
 #include "CPP_CustomBPFunctionLibrary.generated.h"
+
 
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType)
 class CITYBUILDING_API UCPP_CustomBPFunctionLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 	
+public:
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Conversions")
+	static FString GetLeadingZerosInt(int NumberToConvert, int Digits);
 };
 
 #pragma region ENUMs
@@ -37,3 +42,7 @@ namespace EMonthName {
 }
 
 #pragma endregion ENUMs
+
+#pragma region STRUCTs
+
+#pragma endregion STRUCTs
