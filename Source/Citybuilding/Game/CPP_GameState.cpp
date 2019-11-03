@@ -2,6 +2,7 @@
 
 
 #include "CPP_GameState.h"
+#include "Array.h"
 
 #include <Runtime/Engine/Classes/Engine/Engine.h>
 
@@ -17,7 +18,8 @@ ACPP_GameState::ACPP_GameState() {
 
 void ACPP_GameState::SetClockwork(float DeltaTime, float Speed) {
 	//Adjust real world time to game time through TimeUnit
-	Clockwork += DeltaTime * Speed;
+	//Clockprogress (gamehours) = DeltaTime (IRLSeconds) * TimeUnit (Gamehours / IRLseconds) * Speedfactor (-)
+	Clockwork += DeltaTime * Speed * CurrentGameSpeedValue;
 }
 
 void ACPP_GameState::BeginPlay() {
@@ -135,4 +137,69 @@ FVector2D ACPP_GameState::GetTime() {
 FVector ACPP_GameState::GetDate() {
 	FVector VDate = { float(CalDay), float(CalMonth), float(CalYear)};
 	return VDate;
+}
+
+void ACPP_GameState::SetGameSpeed(int NewLevel) {
+
+	//Is the game currently paused? If so, modify saved value to avoid accidentally starting the game
+
+	//correct for array placing
+	int SpeedPosition = NewLevel;
+	if (SpeedPosition < 0) { SpeedPosition = 0; };
+	if (SpeedPosition > 5) { SpeedPosition = 5; };
+	if (bIsPaused) {
+		GameSpeedSaved = GameSpeed[SpeedPosition];
+	}
+	else {
+		CurrentGameSpeedValue = GameSpeed[SpeedPosition];
+	}
+}
+
+int ACPP_GameState::GetGameSpeed() const{
+
+	//Get Saved value instead current speed if game is apused
+	if (bIsPaused) {
+		for (int i = 0; i < GameSpeed.Num(); i++) {
+			if (GameSpeedSaved == GameSpeed[i]) {
+				return i;
+			}
+		}
+		//fallback to paused status
+		return 0;
+	}
+	else {
+		for (int i = 0; i < GameSpeed.Num(); i++) {
+			if (CurrentGameSpeedValue == GameSpeed[i]) {
+				if (GEngine) {
+					GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, FString::Printf(TEXT("Got Speed %d!"), i));
+				}
+				return i;
+			}
+		}
+		return 0;
+	}
+}
+
+void ACPP_GameState::SwitchPause() {
+	//Game is being paused
+	if (!bIsPaused) {
+		//save current speed, stop game and switch game state bool
+		GameSpeedSaved = CurrentGameSpeedValue;
+		CurrentGameSpeedValue = 0;
+		bIsPaused = true;
+		if (GEngine) {
+			GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("Game paused!"));
+		}
+		return;
+	}
+	else {
+		//restore saved game speed, reset saved and bool values
+		CurrentGameSpeedValue = GameSpeedSaved;
+		GameSpeedSaved = 0;
+		bIsPaused = false;
+		if (GEngine) {
+			GEngine->AddOnScreenDebugMessage(-1, .5f, FColor::Red, TEXT("Game resumed!"));
+		}
+		return;
+	}
 }

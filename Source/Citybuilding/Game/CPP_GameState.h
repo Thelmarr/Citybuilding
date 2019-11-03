@@ -20,6 +20,11 @@ public:
 	//virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
 
+
+	/*
+	***********Calendar units***********
+	*/
+	
 	//Calendar day at game start
 	UPROPERTY(EditAnywhere, Category = "GameTime", DisplayName = "Starting Day")
 	int CalDay = 1;
@@ -32,8 +37,20 @@ public:
 	UPROPERTY(EditAnywhere, Category = "GameTime", DisplayName = "Starting Year")
 	int CalYear = 0;
 	
+
+
+
+
+
 	//counts the number of passed days since game start for calendar calculation
 	int DaysSinceStart = 0;
+
+
+
+
+	/*
+	***********Clock units***********
+	*/
 
 	//Day time at game start
 	UPROPERTY(EditAnywhere, Category = "GameTime", DisplayName = "Starting Hour")
@@ -44,14 +61,41 @@ public:
 
 	//Game hours per second passed
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "GameTime", DisplayName = "Time Unit")
-	float TimeUnit = 12.5f;
+	float TimeUnit = 1.0f;
 
 	//How much time has passed (in float)
 	UPROPERTY(BlueprintReadWrite, Category = "GameTime")
 	float Clockwork = 0.f;
-	//Level of Gamespeed
-	UPROPERTY(EditAnywhere, Category = "GameTime", DisplayName = "Game Speed")
-	int GameSpeed = 1.0f;
+
+	//Current Level of Gamespeed (internal)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GameTime", DisplayName = "Game Speed")
+	int CurrentGameSpeedValue = 1;
+
+
+	/*
+***********Game Speed Values***********
+	*/
+
+	UPROPERTY(BlueprintReadWrite, Category = "GameSpeed")
+	bool bIsPaused = false;
+
+	//Saved value for pausing game
+	UPROPERTY(EditAnywhere, Category = "GameSpeed")
+	int GameSpeedSaved = 0;
+
+	TArray<int> GameSpeed = {
+		0,
+		1,
+		6,
+		24,
+		120,
+		336
+	};
+
+	/*
+***********Calendar functions***********
+	*/
+
 
 	UFUNCTION(BlueprintCallable, Category = "GameTime")
 	void SetClockwork(float DeltaTime, float Speed);
@@ -65,4 +109,17 @@ public:
 	UFUNCTION(BlueprintPure, Category = "GameTime")
 	FVector GetDate();
 
+	/*
+***********GameSpeed functions***********
+	*/
+
+	UFUNCTION(BluePrintCallable, Category = "GameTime")
+	void SwitchPause();
+
+	UFUNCTION(BluePrintCallable, Category = "GameTime")
+	void SetGameSpeed(int NewLevel);
+	
+	UFUNCTION(BluePrintPure, Category = "GameTime")
+	int GetGameSpeed() const;
+	
 };
